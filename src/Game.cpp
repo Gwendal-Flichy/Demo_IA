@@ -99,6 +99,13 @@ void Game::renderBoundingBox()
 {
     for (const auto& go : m_allGameObjects)
     {
+        sf::RectangleShape rectangle({m_window.getSize().x-350.f,m_window.getSize().y - 250.f });
+        rectangle.setOutlineColor(sf::Color::Green);
+        rectangle.setOutlineThickness(5);
+        rectangle.setOrigin(rectangle.getSize().x / 2.f, rectangle.getSize().y / 2);
+        rectangle.setPosition({ m_window.getSize().x/2.f, m_window.getSize().y / 2.f });
+        rectangle.setFillColor(sf::Color::Transparent);
+    	
         OBB obb = go->getBoundingBox();
         sf::Color col = sf::Color::Green;
 
@@ -112,7 +119,7 @@ void Game::renderBoundingBox()
             lines.push_back(sf::Vertex{ {corners[i].x, corners[i].y}, col });
             lines.push_back(sf::Vertex{ {corners[nextIdx].x, corners[nextIdx].y}, col });
         }
-
+        m_window.draw(rectangle);
         m_window.draw(&lines[0], lines.size(), sf::Lines);
     }
 }
