@@ -2,6 +2,14 @@
 
 Petit jeu avec notre première IA, utilisant SFML 2.6.
 
+Les Controles :
+Z - Avant
+Q - trouner a droite
+S - Arrière
+D - trouner a gauche
+clickGauche - tirer
+Espace - esquive
+
 ## Prérequis minimes
 
 - Git
