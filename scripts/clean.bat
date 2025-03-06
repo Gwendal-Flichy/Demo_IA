@@ -1,5 +1,5 @@
 @echo off
-echo suppresssion du build et du external pour recommencer l'installation
+echo suppresssion du build, du cmake et du external pour recommencer l'installation
 echo ====================================================================
 
 cd ..
@@ -8,6 +8,9 @@ echo dossier build supprimer
 
 if exist external rmdir /s /q external
 echo dossier external supprimer
+
+if exist cmake rmdir /s /q cmake
+echo dossier cmake supprimer
 
 cd scripts
 
