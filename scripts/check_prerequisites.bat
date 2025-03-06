@@ -56,25 +56,25 @@ if !errorlevel! equ 0 (
         echo [AVERTISSEMENT] CMake est installe mais n'est pas dans le PATH.
         echo [AVERTISSEMENT] Ajoutez "C:\Program Files\CMake\bin" au PATH ou utilisez la version locale.
         set "PATH=C:\Program Files\CMake\bin;%PATH%"
-        goto :cmake_check_end    
+        goto :create_cmake    
     ) else if exist "C:\Program Files (x86)\CMake\bin\cmake.exe" (
         set CMAKE_FOUND=1
         echo [AVERTISSEMENT] CMake est installe mais n'est pas dans le PATH.
         echo [AVERTISSEMENT] Ajoutez "C:\Program Files (x86)\CMake\bin" au PATH ou utilisez la version locale.
         set "PATH=C:\Program Files (x86)\CMake\bin;%PATH%"
-        goto :cmake_check_end
+        goto :create_cmake
     ) else if exist "%LOCALAPPDATA%\Programs\CMake\bin\cmake.exe" (
         set CMAKE_FOUND=1
         echo [AVERTISSEMENT] CMake est installe pour l'utilisateur actuel mais n'est pas dans le PATH.
         echo [AVERTISSEMENT] Ajoutez "%LOCALAPPDATA%\Programs\CMake\bin" au PATH ou utilisez la version locale.
         set "PATH=%LOCALAPPDATA%\Programs\CMake\bin;%PATH%"
-        goto :cmake_check_end
+        goto :create_cmake
     ) else if exist "%APPDATA%\CMake\bin\cmake.exe" (
         set CMAKE_FOUND=1
         echo [AVERTISSEMENT] CMake est installe pour l'utilisateur actuel mais n'est pas dans le PATH.
         echo [AVERTISSEMENT] Ajoutez "%APPDATA%\CMake\bin" au PATH ou utilisez la version locale.
         set "PATH=%APPDATA%\CMake\bin;%PATH%"
-        goto :cmake_check_end
+        goto :create_cmake
     )
     
     :: Vérifier si une version locale existe dans le projet
@@ -88,6 +88,7 @@ if !errorlevel! equ 0 (
     :: Si CMake n'est toujours pas trouvé, proposer de l'installer localement
     if !CMAKE_FOUND! equ 0 (
         echo [AVERTISSEMENT] CMake n'a pas ete trouve sur le systeme ni dans le projet.
+        :create_cmake
         echo Voulez-vous telecharger et installer CMake localement pour ce projet? (O/N)
         set /p INSTALL_CMAKE=
         
