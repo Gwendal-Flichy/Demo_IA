@@ -10,18 +10,21 @@ if not exist ..\build mkdir ..\build
 :: Se placer dans le dossier build
 cd ..\build
 
-:: Configurer le projet avec CMake (utiliser la version locale si disponible)
-echo [INFO] Configuration du projet...
+:: Déterminer le chemin de CMake à utiliser
+set CMAKE_PATH=cmake
 if exist "..\cmake\bin\cmake.exe" (
+    set CMAKE_PATH=..\cmake\bin\cmake
     echo [INFO] Utilisation de CMake local
-    ..\cmake\bin\cmake ..
 ) else (
     echo [INFO] Utilisation de CMake systeme
-    cmake ..
 )
 
+:: Configurer le projet avec CMake
+echo [INFO] Configuration du projet...
+!CMAKE_PATH! ..
+
 :: Vérifier si la configuration a réussi
-echo Code de retour après configuration: !errorlevel!
+echo Code de retour apres configuration: !errorlevel!
 if !errorlevel! neq 0 (
     echo [ERREUR] Echec de la configuration du projet.
     cd ..\scripts
@@ -30,10 +33,10 @@ if !errorlevel! neq 0 (
 
 :: Compiler le projet
 echo [INFO] Compilation du projet...
-cmake --build . --config Debug
+!CMAKE_PATH! --build . --config Debug
 
 :: Vérifier si la compilation a réussi
-echo Code de retour après configuration: !errorlevel!
+echo Code de retour apres compilation: !errorlevel!
 if !errorlevel! neq 0 (
     echo [ERREUR] Echec de la compilation du projet.
     cd ..\scripts
