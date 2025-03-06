@@ -1,4 +1,6 @@
 @echo off
+setlocal enabledelayedexpansion
+
 echo Configuration du projet avec CMake...
 echo ==================================
 
@@ -8,12 +10,19 @@ if not exist ..\build mkdir ..\build
 :: Se placer dans le dossier build
 cd ..\build
 
-:: Configurer le projet avec CMake
+:: Configurer le projet avec CMake (utiliser la version locale si disponible)
 echo [INFO] Configuration du projet...
-cmake ..
+if exist "..\cmake\bin\cmake.exe" (
+    echo [INFO] Utilisation de CMake local
+    ..\cmake\bin\cmake ..
+) else (
+    echo [INFO] Utilisation de CMake systeme
+    cmake ..
+)
 
 :: Vérifier si la configuration a réussi
-if %errorlevel% neq 0 (
+echo Code de retour après configuration: !errorlevel!
+if !errorlevel! neq 0 (
     echo [ERREUR] Echec de la configuration du projet.
     cd ..\scripts
     exit /b 1
@@ -24,7 +33,8 @@ echo [INFO] Compilation du projet...
 cmake --build . --config Debug
 
 :: Vérifier si la compilation a réussi
-if %errorlevel% neq 0 (
+echo Code de retour après configuration: !errorlevel!
+if !errorlevel! neq 0 (
     echo [ERREUR] Echec de la compilation du projet.
     cd ..\scripts
     exit /b 1

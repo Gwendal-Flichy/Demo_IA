@@ -1,4 +1,5 @@
 @echo off
+setlocal enabledelayedexpansion
 echo Installation locale de SFML 2.6...
 echo ================================
 
@@ -18,7 +19,7 @@ if exist %SFML_DIR% (
     :: URL de téléchargement fixe (sans utiliser de variables dans PowerShell)
     powershell -Command "Invoke-WebRequest -Uri 'https://www.sfml-dev.org/files/SFML-2.6.0-windows-vc17-64-bit.zip' -OutFile '..\external\sfml.zip'"
     
-    if %errorlevel% neq 0 (
+    if !errorlevel! neq 0 (
         echo [ERREUR] Echec du telechargement de SFML.
         exit /b 1
     )
@@ -27,7 +28,7 @@ if exist %SFML_DIR% (
     echo [INFO] Extraction de SFML...
     powershell -Command "Expand-Archive -Path '..\external\sfml.zip' -DestinationPath '..\external'"
     
-    if %errorlevel% neq 0 (
+    if !errorlevel! neq 0 (
         echo [ERREUR] Echec de l'extraction de SFML.
         exit /b 1
     )
