@@ -19,7 +19,7 @@ public:
     void takeDamage(int dmg = 1);
     void die();
     Vec2 getPositon() const;
-    int getPV() const;
+    int getHP() const;
     float getAngle() const;
 
     bool isKick;
@@ -33,8 +33,8 @@ private:
     bool m_isDecelerating;
 
     //  Gameplay
-    int m_PV;
-    int m_MaxPV;
+    int m_HP;
+    int m_MaxHP;
     bool m_isDead;
 
     //  Physics

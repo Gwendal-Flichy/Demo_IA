@@ -13,7 +13,7 @@ Fireball::Fireball(IGameObjectContainer& game, const Vec2& position, const Vec2&
     , m_velocity(velocity)
 	, m_type(type)
 {
-    m_sprite.setTexture(getOwner().getGame().getTextureCache().getTexture("point.bmp"));
+    m_sprite.setTexture(getOwner().getGame().getTextureCache().getTexture("point.png"));
 }
 
 void Fireball::handleInputs(const sf::Event& event)

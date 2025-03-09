@@ -43,7 +43,7 @@ Game::Game(const std::string& execFilePath)
     );
     
 
-    new PlayerShip(*this, { 600.0f, 300.f });
+    new PlayerShip(*this, {( m_Width+300) - m_Width, m_Height / 2.0f });
     new Boss(*this, { m_Width / 2.0f, m_Height / 2.0f });
 }
 

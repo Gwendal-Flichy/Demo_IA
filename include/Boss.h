@@ -21,8 +21,8 @@ public:
     void takeDamage(int dmg = 1);
     void die();
 
-    void fireWithPistol();
-    void fireWithShotgun();
+    void fireWithPistol() const;
+    void fireWithShotgun()const;
     void Laser();
     void RightMelee();
     void LeftMelee();
@@ -38,8 +38,8 @@ public:
     Vec2 getDistanceToPlayer() const;
     Vec2 getDistanceToCenter() const;
     Vec2 getCenter()const;
-    int getPV()const;
-    int getMaxPV()const;
+    int getHP()const;
+    int getMaxHP()const;
     bool IsKickedPlayer()const;
     bool m_dashing;
     float SpeedLimit;
@@ -48,8 +48,8 @@ private:
     int m_speed;
     float m_angle;
 
-    int m_PV;
-    int m_MaxPV;
+    int m_HP;
+    int m_MaxHP;
     bool m_isDead;
     bool m_isInvincible;
     sf::Sprite m_sprite;

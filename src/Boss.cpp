@@ -3,7 +3,7 @@
 #include "BossBehavior.h"
 #include "Fireball.h"
 #include "Game.h"
-#include "melee.h"
+#include "OrbitalProjectile.h"
 
 
 int getPistolBulletSpeed() { return 300; }
@@ -25,49 +25,47 @@ Boss::Boss(IGameObjectContainer& game, const Vec2& position)
 	,m_speed(0)
 	, m_dashing(false)
 	, m_isDead(false)
-	, m_PV(50)
-	, m_MaxPV(m_PV)
+	, m_HP(50)
+	, m_MaxHP(m_HP)
 	, SpeedLimit(0)
 	, GoingToCenter(false)
 {
-    m_sprite.setTexture(getOwner().getGame().getTextureCache().getTexture("point.bmp"));
+    m_sprite.setTexture(getOwner().getGame().getTextureCache().getTexture("point.png"));
 
-
+		//Phase 1 du boss
         auto* behavior = new BT::Retry(&m_rootNode);
+        auto* Combo1 = new BT::PlayerDictance(behavior, 0.f, 150.f);
+        auto* Combo2 = new BT::PlayerDictance(behavior, 160.f, 600);
+        auto* Combo3 = new BT::PlayerDictance(behavior, 610.f, 700.f);
+        auto* Combo4 = new BT::PlayerDictance(behavior, 690.f, 2000.f);
 
-        auto* DistanceInf20 = new BT::PlayerDictance(behavior, 690.f, 2000.f);
-        auto* DistanceInf40 = new BT::PlayerDictance(behavior, 650.f, 700.f);
-        auto* DistanceInf10 = new BT::PlayerDictance(behavior, 0.f, 150.f);
-        auto* DistanceInf50 = new BT::PlayerDictance(behavior, 160.f, 640);
+        auto* SequenceP1_1 = new BT::Sequence(Combo1);
+        new BT::Sprint(SequenceP1_1);
+        //new BT::Walk(SequenceP1_4);
+        new BT::DoKick(SequenceP1_1);
+        new BT::FireShotgunAfterKick(SequenceP1_1);
 
-        auto* SequenceP1_3 = new BT::Sequence(DistanceInf40);
+        auto* SequenceP1_2 = new BT::Sequence(Combo2);
+        new BT::Walk(SequenceP1_2);
+        new BT::FirePistol(SequenceP1_2);
+
+        auto* SequenceP1_3 = new BT::Sequence(Combo3);
         new BT::Sprint(SequenceP1_3);
         new BT::FirePistol(SequenceP1_3);
 
-        auto* SequenceP1_2 = new BT::Sequence(DistanceInf20);
-        new BT::Idle(SequenceP1_2);
-        new BT::Dash(SequenceP1_2, 20, 7, 45);
-        new BT::Dash(SequenceP1_2, 20, 2);
-        new BT::DoubleMelee(SequenceP1_2);
-
-        auto* SequenceP1_4 = new BT::Sequence(DistanceInf10);
-        new BT::Sprint(SequenceP1_4);
-        //new BT::Walk(SequenceP1_4);
-        new BT::DoKick(SequenceP1_4);
-        new BT::FireShotgunAfterKick(SequenceP1_4);
-
-
-        auto* BaseSequenceP1 = new BT::Sequence(DistanceInf50);
-        new BT::Walk(BaseSequenceP1);
-        new BT::FirePistol(BaseSequenceP1);
+        auto* SequenceP1_4 = new BT::Sequence(Combo4);
+        new BT::Idle(SequenceP1_4);
+        new BT::Dash(SequenceP1_4, 20, 7, 45);
+        new BT::Dash(SequenceP1_4, 20, 2);
+        new BT::DoubleMelee(SequenceP1_4);
 
         
-
+        //Phase 2 du boss
         auto* Second = new BT::SecondPhase(behavior);
         new BT::IsPlayerDead(behavior);
         auto* SequenceP2_1 = new BT::Sequence(Second);
         auto* debutP2 = new BT::Retry(SequenceP2_1);
-        
+
         new BT::GotoCenter(debutP2);
         new BT::Walk(debutP2);
         new BT::IsInCenter(debutP2);
@@ -78,12 +76,12 @@ Boss::Boss(IGameObjectContainer& game, const Vec2& position)
         auto* P2 = new BT::Retry(SequenceP2_1);
         for (int i = 0; i < 5; i++)
         {
-	        for (int j = 0 ; j<10;j++)
-	        {
-	        	new BT::FireShotgun(P2);
-	        }
+            for (int j = 0; j < 10; j++)
+            {
+                new BT::FireShotgun(P2);
+            }
 
-        	new BT::FireLaser(P2);
+            new BT::FireLaser(P2);
         }
         auto* untilTheEnd = new BT::DoUntilFailure(P2);
 
@@ -91,6 +89,11 @@ Boss::Boss(IGameObjectContainer& game, const Vec2& position)
 
 
         new BT::IsPlayerDead(P2);
+        
+
+        
+
+        
         
 
 
@@ -143,7 +146,7 @@ bool Boss::findValidTarget()
 
 bool Boss::isCurrentTargetValid() const
 {
-    if (m_currentTarget->getPV() <= 0)
+    if (m_currentTarget->getHP() <= 0)
         return false;
 
     return true;
@@ -153,14 +156,14 @@ void Boss::setSpeed(const int& Speed)
     m_speed = Speed;
 }
 
-void Boss::fireWithPistol()
+void Boss::fireWithPistol()const
 {
     
     new Fireball(m_owner, m_position, Vec2{ getPistolBulletSpeed() * std::cos(m_angle) ,  getPistolBulletSpeed() * std::sin(m_angle) },ENEMYprojectile_TYPE);
 
 }
 
-void Boss::fireWithShotgun()
+void Boss::fireWithShotgun()const
 {
     new Fireball(m_owner, m_position, Vec2{ getShotGunBulletSpeed() * std::cos(m_angle) ,  getShotGunBulletSpeed() * std::sin(m_angle) }, ENEMYprojectile_TYPE);
     new Fireball(m_owner, m_position, Vec2{ getShotGunBulletSpeed() * std::cos(m_angle+0.2f) ,  getShotGunBulletSpeed() * std::sin(m_angle+ 0.2f) }, ENEMYprojectile_TYPE);
@@ -173,24 +176,24 @@ void Boss::fireWithShotgun()
 void Boss::Laser()
 {
 
-    new Melee(m_owner, this, 270.f, m_owner.getGame().getWindowSize().y/2.f,3.f,359.9f,m_owner.getGame().getWindowSize().y,70.f, ENEMYmelee_TYPE);
+    new OrbitalProjectile(m_owner, this, 270.f, m_owner.getGame().getWindowSize().y/2.f,3.f,359.9f,m_owner.getGame().getWindowSize().y,70.f, ENEMYmelee_TYPE);
 
 }
 void Boss::RightMelee()
 {
 
-    new Melee(m_owner, this, (m_angle / 3.14159265f * 180.f)+90-30, 40, -6.f, 120 , 80.f, 20.f, ENEMYmelee_TYPE);
+    new OrbitalProjectile(m_owner, this, (m_angle / 3.14159265f * 180.f)+90-30, 40, -6.f, 120 , 80.f, 20.f, ENEMYmelee_TYPE);
     
 }
 void Boss::LeftMelee()
 {
 
-    new Melee(m_owner, this, (m_angle / 3.14159265f * 180.f) - 90 + 30, 40.f, 6.f, 120, 80.f, 20.f, ENEMYmelee_TYPE);
+    new OrbitalProjectile(m_owner, this, (m_angle / 3.14159265f * 180.f) - 90 + 30, 40.f, 6.f, 120, 80.f, 20.f, ENEMYmelee_TYPE);
     
 }
 void Boss::Kick()
 {
-    new Melee(m_owner, this, (m_angle / 3.14159265f * 180.f), 34.f, 0.03f, 0.5f, 68.f, 40.f, ENEMYKick_TYPE);
+    new OrbitalProjectile(m_owner, this, (m_angle / 3.14159265f * 180.f), 34.f, 0.03f, 0.5f, 68.f, 40.f, ENEMYKick_TYPE);
 }
 
 Vec2 Boss::getPosition() const
@@ -255,12 +258,12 @@ void Boss::render(sf::RenderWindow& window)
     m_sprite.setRotation(m_angle / 3.14159265f * 180.f);
     m_sprite.setOrigin(getBossSize().x / 2.f, getBossSize().y / 2.f);
     m_sprite.setPosition(m_position.x, m_position.y);
-    sf::Text PV("Boss : " + std::to_string(m_PV) + " / " + std::to_string(m_MaxPV), m_owner.getGame().font,40);
-    PV.setOrigin(PV.getLocalBounds().width /2.f, PV.getLocalBounds().height / 2.f);
-    PV.setPosition(m_owner.getGame().getWindowSize().x / 2.f, m_owner.getGame().getWindowSize().y - 100);
-    PV.setStyle(sf::Text::Bold);
+    sf::Text HP("Boss : " + std::to_string(m_HP) + " / " + std::to_string(m_MaxHP), m_owner.getGame().font,45);
+    HP.setOrigin(HP.getLocalBounds().width /2.f, HP.getLocalBounds().height / 2.f);
+    HP.setPosition(m_owner.getGame().getWindowSize().x / 2.f, m_owner.getGame().getWindowSize().y - 100);
+    HP.setStyle(sf::Text::Bold);
     window.draw(m_sprite);
-    window.draw(PV);
+    window.draw(HP);
 }
 
 OBB Boss::getBoundingBox() const
@@ -282,8 +285,8 @@ GameObjectType Boss::gameObjectType()
 void Boss::takeDamage(int dmg)
 {
     m_isInvincible = true;
-    m_PV -= dmg;
-    if (m_PV <= 0)
+    m_HP -= dmg;
+    if (m_HP <= 0)
         die();
 }
 
@@ -308,13 +311,13 @@ void Boss::die()
     destroy();
 }
 
-int Boss::getPV() const
+int Boss::getHP() const
 {
-    return m_PV;
+    return m_HP;
 }
-int Boss::getMaxPV()const
+int Boss::getMaxHP()const
 {
-    return m_MaxPV;
+    return m_MaxHP;
 }
 
 

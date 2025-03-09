@@ -5,10 +5,10 @@
 
 class IGameObject;
 
-class Melee : public IGameObject
+class OrbitalProjectile : public IGameObject
 {
 public:
-    Melee(IGameObjectContainer& game, IGameObject* owner,
+    OrbitalProjectile(IGameObjectContainer& game, IGameObject* owner,
         float initialAngle, float orbitalRadius, float angularSpeed, float totalAngleToDestroy, float Width, float Height, const GameObjectType& type);
 
     void handleInputs(const sf::Event& event) override;

@@ -370,7 +370,7 @@ namespace BT
         bool condition()
         {
 
-            return getGameObject()->getPV() <= getGameObject()->getMaxPV() / 2;
+            return getGameObject()->getHP() <= getGameObject()->getMaxHP() / 2;
         }
 
 

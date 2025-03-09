@@ -1,12 +1,13 @@
 ﻿
-#include "melee.h"
+#include "OrbitalProjectile.h"
+
 #include "Game.h"
 #include "PlayerShip.h"
 #include "Boss.h"
 
 
-const float PI = 3.14159265f;
-const float TWO_PI = 2.0f * PI;
+#define PI  3.14159265f
+#define TWO_PI  (2.0f * PI)
 
 
 float normalizeAngle(float angle) {
@@ -27,7 +28,7 @@ Vec2 getOrbitalProjectileSize()
     return { 64.f, 16.f };
 }
 
-Melee::Melee(IGameObjectContainer& game, IGameObject* owner,
+OrbitalProjectile::OrbitalProjectile(IGameObjectContainer& game, IGameObject* owner,
     float initialAngle, float orbitalRadius, float angularSpeed, float totalAngleToDestroy,float Width,float Height,const GameObjectType& type)
     : IGameObject(game)
     , m_owner(owner)
@@ -45,7 +46,7 @@ Melee::Melee(IGameObjectContainer& game, IGameObject* owner,
 	, m_Height(Height)
 {
 
-    m_sprite.setTexture(getOwner().getGame().getTextureCache().getTexture("point.bmp"));
+    m_sprite.setTexture(getOwner().getGame().getTextureCache().getTexture("point.png"));
 
 
     if (m_hasEndAngle)
@@ -68,11 +69,11 @@ Melee::Melee(IGameObjectContainer& game, IGameObject* owner,
     m_position.y = ownerPos.y + m_orbitalRadius * std::sin(m_angle);
 }
 
-void Melee::handleInputs(const sf::Event& event)
+void OrbitalProjectile::handleInputs(const sf::Event& event)
 {
 }
 
-void Melee::update(float deltaTime)
+void OrbitalProjectile::update(float deltaTime)
 {
     if (IsOwnerDead())
     {
@@ -107,30 +108,6 @@ void Melee::update(float deltaTime)
         {
             shouldDestroy = true;
         }
-        //if ((previousAngle > m_endAngle && m_angle <= m_endAngle) ||
-        //    (m_endAngle > m_initialAngle && m_angle <= m_endAngle && previousAngle > m_endAngle))
-        //{
-        //    shouldDestroy = true;
-        //}
-
-        //if (m_angularSpeed > 0)
-        //{
-
-        //    if ((previousAngle < m_endAngle && m_angle >= m_endAngle) ||
-        //        (m_endAngle < m_initialAngle && m_angle >= m_endAngle && previousAngle < m_endAngle))
-        //    {
-        //        shouldDestroy = true;
-        //    }
-        //}
-        //else
-        //{
-        //    if ((previousAngle > m_endAngle && m_angle <= m_endAngle) ||
-        //        (m_endAngle > m_initialAngle && m_angle <= m_endAngle && previousAngle > m_endAngle))
-        //    {
-        //        shouldDestroy = true;
-        //    }
-        //}
-
 
         if (shouldDestroy)
         {
@@ -143,7 +120,7 @@ void Melee::update(float deltaTime)
     m_position.y = ownerPos.y + m_orbitalRadius * std::sin(m_angle);
 }
 
-void Melee::render(sf::RenderWindow& window)
+void OrbitalProjectile::render(sf::RenderWindow& window)
 {
     m_sprite.setOrigin(m_Width / 2.f, m_Height / 2.f);
     m_sprite.setPosition(m_position.x, m_position.y);
@@ -151,7 +128,7 @@ void Melee::render(sf::RenderWindow& window)
     window.draw(m_sprite);
 }
 
-OBB Melee::getBoundingBox() const
+OBB OrbitalProjectile::getBoundingBox() const
 {
     Vec2 size = { m_Width ,m_Height };
     return {
@@ -161,12 +138,12 @@ OBB Melee::getBoundingBox() const
     };
 }
 
-GameObjectType Melee::gameObjectType()
+GameObjectType OrbitalProjectile::gameObjectType()
 {
     return m_type;
 }
 
-Vec2 Melee::getOwnerPosition() const
+Vec2 OrbitalProjectile::getOwnerPosition() const
 {
     if (!m_owner)
         return { 0.f, 0.f };
@@ -183,7 +160,7 @@ Vec2 Melee::getOwnerPosition() const
     }
 }
 
-bool Melee::IsOwnerDead() const
+bool OrbitalProjectile::IsOwnerDead() const
 {
     if (!m_owner)
         return true;
@@ -191,9 +168,9 @@ bool Melee::IsOwnerDead() const
     switch (m_owner->gameObjectType())
     {
     case PLAYERSHIP_TYPE:
-        return static_cast<PlayerShip*>(m_owner)->getPV() <=0;
+        return static_cast<PlayerShip*>(m_owner)->getHP() <=0;
     case ENEMY_TYPE:
-        return static_cast<Boss*>(m_owner)->getPV() <= 0;
+        return static_cast<Boss*>(m_owner)->getHP() <= 0;
     default:
         return true;
     }

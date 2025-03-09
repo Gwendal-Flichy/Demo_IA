@@ -4,7 +4,7 @@
 
 #include "Game.h"
 #include "Fireball.h"
-#include "melee.h"
+#include "OrbitalProjectile.h"
 
 
 Vec2 getPlayerShipSize() { return { 32.f, 32.f }; }
@@ -16,8 +16,8 @@ float getPlayerShipMaxVelocity() { return 600.f; }
 
 PlayerShip::PlayerShip(IGameObjectContainer& game, const Vec2& position)
     : IGameObject(game)
-    , m_PV(15)
-	, m_MaxPV(m_PV)
+    , m_HP(15)
+	, m_MaxHP(m_HP)
     , m_angle(0.f)
     , m_position(position)
     , m_velocity(0.f, 0.f)
@@ -33,7 +33,7 @@ PlayerShip::PlayerShip(IGameObjectContainer& game, const Vec2& position)
 	, isKick(false)
 	, KBTime(0.5f)  
 {
-    m_sprite.setTexture(getOwner().getGame().getTextureCache().getTexture("point.bmp"));
+    m_sprite.setTexture(getOwner().getGame().getTextureCache().getTexture("point.png"));
 }
 
 void PlayerShip::handleInputs(const sf::Event& event)
@@ -163,10 +163,10 @@ void PlayerShip::render(sf::RenderWindow& window)
     m_sprite.setRotation(m_angle / 3.14159265f * 180.f);
     m_sprite.setOrigin(getPlayerShipSize().x / 2.f, getPlayerShipSize().y / 2.f);
     m_sprite.setPosition(m_position.x, m_position.y);
-    sf::Text PV("HP : "+std::to_string(m_PV)+" / "+ std::to_string(m_MaxPV),m_owner.getGame().font,40);
-    PV.setPosition(50, 50);
+    sf::Text HP("HP : "+std::to_string(m_HP)+" / "+ std::to_string(m_MaxHP),m_owner.getGame().font,45);
+    HP.setPosition(50, 50);
     window.draw(m_sprite);
-    window.draw(PV);
+    window.draw(HP);
 }
 
 OBB PlayerShip::getBoundingBox() const
@@ -193,8 +193,8 @@ void PlayerShip::takeDamage(int dmg)
     if (m_elapsedTimeHit.asSeconds() >= m_invincibility&&!m_daching)
     {
         m_isInvincible = true;
-        m_PV -= dmg;
-        if (m_PV <= 0)
+        m_HP -= dmg;
+        if (m_HP <= 0)
             die();
         m_clockHit.restart();
     }
@@ -217,9 +217,9 @@ Vec2 PlayerShip::getPositon() const
     return m_position;
 }
 
-int PlayerShip::getPV() const
+int PlayerShip::getHP() const
 {
-    return m_PV;
+    return m_HP;
 }
 
 float PlayerShip::getAngle() const
